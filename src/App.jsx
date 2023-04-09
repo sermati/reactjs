@@ -4,22 +4,29 @@ import './scss/styles.scss'
 import './App.scss'
 
 import NavBar from './component/NavBar'
+import CartItems from './component/CartItems'
 import ItemListContainer from './component/ItemListContainer'
+import ItemDetailContainer from './component/ItemDetailContainer'
+import Error404 from './component/Error404'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 function App() {
   
-  return (
-    <div className="App">
-      <NavBar />
-      <ItemListContainer titulo='Articulos en carrito' />
-      <div className="container">
-        
-        <h1>Bienvenido a la tienda online.</h1>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius quaerat asperiores.</p>
-
-      </div>
-    </div>
-  )
+    return (
+        <BrowserRouter>
+            <div className="App">
+                <NavBar />
+                <CartItems titulo='Articulos en carrito' />
+                <Routes>
+                    <Route path='/' element={<ItemListContainer />} />
+                    <Route path='/category/:categoryId' element={<ItemListContainer />} />
+                    <Route path='/item/:id' element={<ItemDetailContainer />} />
+                    <Route path='*' element={<Error404 />} />
+                    {/* <Route path='*' element={<Navigate to='/' />} /> */}
+                </Routes>
+            </div>
+        </BrowserRouter>
+    )
   
 }
 
