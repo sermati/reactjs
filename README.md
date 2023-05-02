@@ -7,7 +7,7 @@ Tienda Online - Ecommerce completo y funcional realizado para la entrega del tra
 Se pueden seleccionar productos organizados en categorias, acceder al detalle y seleccionar la cantidad necesaria para ingresar al carrito en tiempo real. Luego se puede terminar la orden de pago ingresando datos del usuario. Todo se almecena en Firebase-Firestore.
 
 ## Demo del sitio:
-https://crealicas.ar/reactjs
+http://react.crealicas.ar/
 
 ## Herramientas/Dependecias utilizadas:
 * Vite 4.1.0
