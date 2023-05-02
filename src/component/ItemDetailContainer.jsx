@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import { mockFecth } from "../utils/mockFetch"
 import ItemDetail from "./ItemDetail"
+import { doc, getDoc, getFirestore } from "firebase/firestore"
+import AlertContainer from "./AlertContainer"
 
 function ItemDetailContainer() {
 
@@ -9,13 +10,29 @@ function ItemDetailContainer() {
     const { id } = useParams()
 
     useEffect(() => {
-        mockFecth(parseInt(id))
-            .then(resp => setProduct(resp))
-            .catch((err) => console.log(err))
+
+        // TRAER UN PRODUCTO
+        const db = getFirestore()
+        const queryDoc = doc(db, 'productos', id)
+        getDoc(queryDoc)
+            .then(resp => setProduct( { id: resp.id, ...resp.data() } ))
+            .catch(err => console.log(err))
+
     }, [])
 
+    //console.log(product.name);
+    
   return (
-    <ItemDetail product={product} />
+    <>
+    {
+        product.name === undefined ?
+            <div className="container mt-3">
+                <AlertContainer alertType={'danger'} message={'No existe este articulo'} />
+            </div>
+        :
+            <ItemDetail product={product} />
+    }
+    </>
   )
 
 }

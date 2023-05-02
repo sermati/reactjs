@@ -1,42 +1,56 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { mockFecth } from '../utils/mockFetch'
-import Item from './Item'
+import Loading from './Loading'
+import ItemList from './ItemList'
+import { collection, getDocs, getFirestore, query, where } from 'firebase/firestore'
 
 function ItemListContainer(){
 
-    const [productos, setProductos] = useState([])
+    const [products, setProducts] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
     const { categoryId } = useParams()
 
     useEffect(() => {
 
         if (categoryId) {
             
-            mockFecth()
-            .then(resp => setProductos(resp.filter(prod => prod.cat === categoryId)))
-            .catch(err => console.log(err))
-            .finally(() => console.log('Siempre y al ultimo'))
+            // TRAER TODOS LOS PRODUCTOS, TODA LA COLECCION PERO FILTRADO
+            const db = getFirestore()
+            const queryCollection = collection(db, 'productos')
+
+            const queryFilter = query(
+                queryCollection,
+                where('cat', '==', categoryId)
+            )
+
+            getDocs(queryFilter)
+                .then(resp => setProducts( resp.docs.map(p => ({ id: p.id, ...p.data() }) ) ))
+                .catch(err => console.log(err))
+                .finally( () => setIsLoading(false) )
 
         } else {
 
-            mockFecth()
-            .then(resp => setProductos(resp))
-            .catch(err => console.log(err))
-            .finally(() => console.log('Siempre y al ultimo'))
-            
+            // TRAER TODA LOS PRODUCTOS, TODA LA COLECCION
+            const db = getFirestore()
+            const queryCollection = collection(db, 'productos')
+
+            getDocs(queryCollection)
+                .then(resp => setProducts( resp.docs.map(p => ({ id: p.id, ...p.data() }) ) ))
+                .catch(err => console.log(err))
+                .finally( () => setIsLoading(false) )
+
         }
 
-        
     }, [categoryId])
 
     return (
 
         <div className="container">
             {
-                productos.length !== 0 ?
-                    productos.map( producto => <Item key={producto.id} producto={producto} /> )
+                isLoading ?
+                    <Loading />
                 :
-                    <h2>Cargando</h2>
+                    <ItemList products = {products} />
             }
         </div>
 
